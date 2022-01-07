@@ -1,15 +1,18 @@
 package hello.core.order;
 
+import hello.core.annotation.MainDiscountPolicy;
 import hello.core.discount.DiscountPolicy;
 import hello.core.discount.FixDiscountPolicy;
 import hello.core.discount.RateDiscountPolicy;
 import hello.core.member.Member;
 import hello.core.member.MemberRepository;
 import hello.core.member.MemoryMemberRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
+//@RequiredArgsConstructor //final 붙은 애들 DI 수행하고, 생성자 만들어준다 (많이 쓰임)
 public class OrderServiceImpl implements OrderService {
     // final일 경우 = or 생성자 를 통해 반드시 값이 할당되어야 한다!
     // 1) 아래 코드는 추상화에도 의존하고 구체화에도 의존하고 있다 (DIP 위반)
@@ -22,7 +25,7 @@ public class OrderServiceImpl implements OrderService {
     private final DiscountPolicy discountPolicy;
 
     @Autowired
-    public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discountPolicy) {//AppConfig에서 orderService() 실행시 실행됨
+    public OrderServiceImpl(MemberRepository memberRepository, @MainDiscountPolicy DiscountPolicy discountPolicy) {//AppConfig에서 orderService() 실행시 실행됨
         //매개변수로 받은 memberRepository, discountPolicy 값을
         //private final MemberRepository memberRepository; 와 DiscountPolicy discountPolicy; 에 할당한다
         this.memberRepository = memberRepository;
