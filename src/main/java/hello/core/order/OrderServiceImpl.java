@@ -11,23 +11,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+//@RequiredArgsConstructor
 @Component
-//@RequiredArgsConstructor //final 붙은 애들 DI 수행하고, 생성자 만들어준다 (많이 쓰임)
 public class OrderServiceImpl implements OrderService {
-    // final일 경우 = or 생성자 를 통해 반드시 값이 할당되어야 한다!
-    // 1) 아래 코드는 추상화에도 의존하고 구체화에도 의존하고 있다 (DIP 위반)
-    // private final MemberRepository memberRepository = new MemoryMemberRepository(); //회원을 찾기위해 필요
-    // private final DiscountPolicy discountPolicy = new FixDiscountPolicy();  //할인정책을 찾기위해 필요
-    // private final DiscountPolicy discountPolicy = new RateDiscountPolicy(); //할인정책을 찾기위해 필요
+//  private final MemberRepository memberRepository = new MemoryMemberRepository(); //DIP 위반 (구현체에도 의존)
+//  private final DiscountPolicy discountPolicy = new FixDiscountPolicy();          //DIP 위반 (구현체에도 의존)
+//  private final DiscountPolicy discountPolicy = new RateDiscountPolicy();         //DIP 위반 (구현체에도 의존)
 
-    // 2) 아래 코드는 추상화에만(인터페이스) 의존하고 있다 (DIP 수행)
-    private final MemberRepository memberRepository;
-    private final DiscountPolicy discountPolicy;
+    private final MemberRepository memberRepository; //DIP 준수 (인터페이스에만 의존)
+    private final DiscountPolicy discountPolicy;     //DIP 준수 (인터페이스에만 의존)
 
     @Autowired
-    public OrderServiceImpl(MemberRepository memberRepository, @MainDiscountPolicy DiscountPolicy discountPolicy) {//AppConfig에서 orderService() 실행시 실행됨
-        //매개변수로 받은 memberRepository, discountPolicy 값을
-        //private final MemberRepository memberRepository; 와 DiscountPolicy discountPolicy; 에 할당한다
+    public OrderServiceImpl(MemberRepository memberRepository, @MainDiscountPolicy DiscountPolicy discountPolicy) {
         this.memberRepository = memberRepository;
         this.discountPolicy = discountPolicy;
     }
@@ -35,17 +30,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order createOrder(Long memberId, String itemName, int itemPrice) {
         Member member = memberRepository.findById(memberId);
-        //단일체계원칙이 잘 설계되었다
-        //OrderServiceImpl 은 할인정책이 바껴도 알 필요가 없다
-        //할인정책이 변경될 경우 DiscountPolicy 에서만 수정한다
-        int discountPrice = discountPolicy.discount(member, itemPrice);
-
+        int discountPrice = discountPolicy.discount(member, itemPrice); //SRP(단일책임원칙) 준수
         return new Order(memberId, itemName, itemPrice, discountPrice);
     }
 
-    //테스트 용도
-
+    // 테스트 용도
     public MemberRepository getMemberRepository() {
         return memberRepository;
     }
 }
+// final일 경우 '=' 혹은 '생성자' 를 통해 반드시 값이 할당되어야 한다
+// @Component : MemberServiceImpl을 스프링 빈으로 등록한다
+// @Autowired : 자동으로 의존관계 주입해준다. ac.getBean(MemberRepository.class)과 비슷하다
+// @RequiredArgsConstructor : final 붙은 애들의 DI를 수행하고, 생성자를 만들어준다 (많이 쓰임)

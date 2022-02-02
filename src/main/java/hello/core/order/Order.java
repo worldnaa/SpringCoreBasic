@@ -7,7 +7,6 @@ public class Order {
     private int itemPrice;     //아이템 가격
     private int discountPrice; //할인 가격
 
-    ///Constructor
     public Order(Long memberId, String itemName, int itemPrice, int discountPrice) {
         this.memberId = memberId;
         this.itemName = itemName;

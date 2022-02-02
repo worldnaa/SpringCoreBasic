@@ -40,11 +40,10 @@ class ApplicationContextBasicFindTest {
         @Test
         @DisplayName("빈 이름으로 조회X")
         void findBeanByNameX() {
-//            MemberService xxxx = ac.getBean("xxxx", MemberService.class);
-            // () -> 의 오른쪽 로직을 실행하면, 왼쪽 예외가 터져야 한다
-            assertThrows(NoSuchBeanDefinitionException.class,
-                    () -> ac.getBean("xxxx", MemberService.class));
+//          MemberService xxxx = ac.getBean("xxxx", MemberService.class);
+//          () -> 의 오른쪽 로직을 실행하면, 왼쪽 예외가 터져야 한다
+            assertThrows(NoSuchBeanDefinitionException.class, () -> ac.getBean("xxxx", MemberService.class));
         }
-
-
 }
+// ac.getBean() : 빈 이름으로 빈 객체(인스턴스)를 조회한다.
+// ac.getBean("찾아올 객체명", 반환 타입) => 반환 타입 미지정 시, Object 반환
