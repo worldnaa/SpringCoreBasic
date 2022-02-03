@@ -22,10 +22,10 @@ class StatefulServiceTest {
         int userBPrice = statefulService2.order("userB", 20000);
 
         //ThreadA : A사용자 주문 금액 조회
-//        int price = statefulService1.getPrice();
+//      int price = statefulService1.getPrice();
         System.out.println("userAPrice = " + userAPrice);
 
-//        Assertions.assertThat(statefulService1.getPrice()).isEqualTo(20000);
+//      Assertions.assertThat(statefulService1.getPrice()).isEqualTo(20000);
     }
 
     static class TestConfig {

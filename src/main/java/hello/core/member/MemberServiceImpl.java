@@ -23,11 +23,14 @@ public class MemberServiceImpl implements MemberService{
         return memberRepository.findById(memberId);
     }
 
-    // 테스트 용도
+    // 싱글톤 테스트 용도
     public MemberRepository getMemberRepository() {
         return memberRepository;
     }
 }
 // final일 경우 '=' 혹은 '생성자' 를 통해 반드시 값이 할당되어야 한다
 // @Component : MemberServiceImpl을 스프링 빈으로 등록한다
+
 // @Autowired : 자동으로 의존관계 주입해준다. ac.getBean(MemberRepository.class)과 비슷하다
+// 이전 AppConfig에서는 @Bean으로 직접 설정정보를 작성했고, 의존관계도직접 명시했다
+// 이제는 이런 설정정보 자체가 없기 때문에, 의존관계 주입도 이 클래스 안에서 해결해야 한다
