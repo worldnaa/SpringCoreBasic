@@ -18,6 +18,7 @@ public class SingletonWithPrototypeTest1 {
     @Test
     void prototypeFind() {
         AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(PrototypeBean.class);
+
         PrototypeBean prototypeBean1 = ac.getBean(PrototypeBean.class);
         prototypeBean1.addCount();
         assertThat(prototypeBean1.getCount()).isEqualTo(1);
@@ -25,7 +26,6 @@ public class SingletonWithPrototypeTest1 {
         PrototypeBean prototypeBean2 = ac.getBean(PrototypeBean.class);
         prototypeBean2.addCount();
         assertThat(prototypeBean2.getCount()).isEqualTo(1);
-
     }
 
     @Test
@@ -39,23 +39,40 @@ public class SingletonWithPrototypeTest1 {
 
         ClientBean clientBean2 = ac.getBean(ClientBean.class);
         int count2 = clientBean2.logic();
-        assertThat(count2).isEqualTo(1);
+//      assertThat(count2).isEqualTo(2); //문제해결 전
+        assertThat(count2).isEqualTo(1); //문제해결 후
     }
 
-    @Scope("singleton")
-    static class ClientBean {
+    // 문제해결 전
+//    @Scope("singleton")
+//    static class ClientBean {
+//
 //        private final PrototypeBean prototypeBean; //생성 시점에 주입됨
-
-        @Autowired
-//        private ObjectProvider<PrototypeBean> prototypeBeanProvider;
-        private Provider<PrototypeBean> prototypeBeanProvider;
+//
+//        @Autowired
 //        public ClientBean(PrototypeBean prototypeBean) {
 //            this.prototypeBean = prototypeBean;
 //        }
+//
+//        public int logic() {
+//            prototypeBean.addCount();
+//            int count = prototypeBean.getCount();
+//            return count;
+//        }
+//    }
+
+    // 문제해결 후
+    @Scope("singleton")
+    static class ClientBean {
+
+        @Autowired
+//      private ObjectProvider<PrototypeBean> prototypeBeanProvider; //ObjectProvider 사용
+        private Provider<PrototypeBean> prototypeBeanProvider; //javax.inject.Provider라는 JSR-330 자바표준사용
 
         public int logic() {
-//            PrototypeBean prototypeBean = prototypeBeanProvider.getObject();
-            PrototypeBean prototypeBean = prototypeBeanProvider.get();
+//          PrototypeBean prototypeBean = prototypeBeanProvider.getObject(); //ObjectProvider 사용
+            PrototypeBean prototypeBean = prototypeBeanProvider.get(); //javax.inject.Provider라는 JSR-330 자바표준사용
+
             prototypeBean.addCount();
             int count = prototypeBean.getCount();
             return count;
@@ -64,6 +81,7 @@ public class SingletonWithPrototypeTest1 {
 
     @Scope("prototype")
     static class PrototypeBean {
+
         private int count = 0;
 
         public void addCount() {
@@ -84,5 +102,4 @@ public class SingletonWithPrototypeTest1 {
             System.out.println("PrototypeBean.destroy");
         }
     }
-
 }
